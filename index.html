@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tokenization Explainer</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        h1 { color: var(--primary); margin-top: 0; }
+        .input-group { margin-bottom: 2rem; }
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .token-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            min-height: 100px;
+        }
+        .token {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-weight: 600;
+            transition: transform 0.1s;
+            cursor: default;
+        }
+        .token:hover { transform: scale(1.1); }
+        .legend {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        .explanation {
+            margin-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Tokenizer Explainer</h1>
+        <p>Large Language Models don't read words like humans do. They break text into smaller chunks called <strong>tokens</strong>. Type below to see how a simple whitespace and punctuation tokenizer works!</p>
+        
+        <div class="input-group">
+            <textarea id="input" rows="4" placeholder="Type something like 'Tokenization is awesome!'..."></textarea>
+        </div>
+
+        <div id="output" class="token-display"></div>
+
+        <div class="legend">
+            * Note: Real AI models (like GPT-4) use more complex algorithms like Byte Pair Encoding (BPE), but the concept of splitting text into chunks remains the same.
+        </div>
+
+        <div class="explanation">
+            <h3>Why Tokenize?</h3>
+            <ul>
+                <li><strong>Vocabulary Size:</strong> Instead of learning every unique word (like 'run', 'running', 'runner'), models learn common sub-parts.</li>
+                <li><strong>Efficiency:</strong> Common words get their own tokens, while rare words are built from smaller pieces.</li>
+                <li><strong>Numbers:</strong> Numbers are often split into individual digits or small groups.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+
+        const colors = [
+            '#fecaca', '#fed7aa', '#fef08a', '#d9f99d', '#bbf7d0', 
+            '#99f6e4', '#bae6fd', '#c7d2fe', '#ddd6fe', '#f5d0fe'
+        ];
+
+        function updateTokens() {
+            const text = input.value;
+            output.innerHTML = '';
+            
+            if (!text) return;
+
+            // Simple regex to split by words and punctuation, keeping both
+            const tokens = text.match(/[\w]+|[^\w\s]|\s+/g) || [];
+
+            tokens.forEach((token, index) => {
+                const span = document.createElement('span');
+                span.className = 'token';
+                span.textContent = token;
+                
+                // Color based on index, skipping whitespace for clarity but showing its space
+                if (token.trim().length > 0) {
+                    span.style.backgroundColor = colors[index % colors.length];
+                } else {
+                    span.style.backgroundColor = '#e2e8f0';
+                    span.style.color = '#94a3b8';
+                }
+                
+                output.appendChild(span);
+            });
+        }
+
+        input.addEventListener('input', updateTokens);
+        
+        // Initial example
+        input.value = "AI tokenization is the process of converting text into a format that machines can understand.";
+        updateTokens();
+    </script>
+</body>
+</html>
